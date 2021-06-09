@@ -7,7 +7,7 @@
 
 # Initializing a git repository
 * git init
-* git remote add <remote-name> <remote-address>
+* git remote add "remote-name" "remote-address"
 
 
 # Always Steps

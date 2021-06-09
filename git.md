@@ -13,4 +13,4 @@
 # Always Steps
 * git add .
 * git commit -m "git message"
-* git push  -u origin master
+* git push -u origin master

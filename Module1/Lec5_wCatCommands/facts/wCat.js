@@ -32,7 +32,23 @@ for (let i=0 ; i<files.length ; i++){
 
 function applySFlag(){
     let dataComp = data.split("\r\n");
+    // console.log(dataComp);
+
+    let sFlagedData = [];
+    // let emptyPushed = false ;
+    for (let i=0 ; i<dataComp.length ; i++){
+        if (dataComp[i] != ''){
+            sFlagedData.push(dataComp[i]);
+            // emptyPushed = false;
+        }else if ( dataComp[i] == '' && dataComp[i-1] != '' && i != 0){
+            sFlagedData.push(dataComp[i]);
+            // emptyPushed = true ;
+        }
+    } 
     
-    console.log(dataComp);
+    // console.log(sFlaggedData);
+    let sFlagedString = sFlagedData.join("\r\n");
+    return sFlagedString;
 } 
-applySFlag();
+data = applySFlag();
+console.log(data);

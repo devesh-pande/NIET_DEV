@@ -1,0 +1,23 @@
+{
+  "name": "NIET_PEP_DEV",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devesh-pande/NIET_DEV.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devesh-pande/NIET_DEV/issues"
+  },
+  "homepage": "https://github.com/devesh-pande/NIET_DEV#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10"
+  }
+}

@@ -17,7 +17,7 @@ function processHTML(html){
     let ch = cheerio.load(html);
     let bothInnings = ch('.Collapsible');
     // [ <div class="Collapsible"></div> , <div class="Collapsible"></div>  ]
-    fs.writeFileSync("match.html" , bothInnings+"");
+    // fs.writeFileSync("match.html" , bothInnings+"");
 
     for(let i=0 ; i<bothInnings.length ; i++){
         let oneInning = bothInnings[i];
@@ -42,18 +42,81 @@ function processHTML(html){
                 // 7 strikeRate
                 let strikeRate = ch(allTds[7]).text();
 
-                console.log(`Batsman = ${batsmanName} Runs = ${runs} Balls = ${balls} Fours = ${fours} Sixes = ${sixes} SR = ${strikeRate}`);
-                // processDetails(teamName , batsmanName , runs , balls , fours , sixes , strikeRate);
+                // console.log(`Batsman = ${batsmanName} Runs = ${runs} Balls = ${balls} Fours = ${fours} Sixes = ${sixes} SR = ${strikeRate}`);
+                processDetails(teamName , batsmanName , runs , balls , fours , sixes , strikeRate);
             }
         }
     }
     console.log("#############################################");
 }
 
+function checkTeamFolder(teamName){
+    let teamFolderPath = `./IPL/${teamName}`;
+    return fs.existsSync(teamFolderPath);
+}
 
-// function  processDetails(teamName , batsmanName , runs , balls , fours , sixes , strikeRate){
-//     // FS ??
-// }
+function checkBatsmanFile(teamName , batsmanName){
+    let batsmanFilePath = `./IPL/${teamName}/${batsmanName}.json`;
+    return fs.existsSync(batsmanFilePath);
+}
+
+function createTeamFolder(teamName){
+    let teamFolderPath = `./IPL/${teamName}`;
+    fs.mkdirSync(teamFolderPath);
+}
+
+function createBatsmanFile(teamName , batsmanName , runs , balls , fours , sixes , strikeRate){
+    let batsmanFilePath = `./IPL/${teamName}/${batsmanName}.json`;
+    let batsmanFile = [];
+    let batsmanDetails = {
+        Runs : runs ,
+        Balls : balls , 
+        Fours :fours ,
+        Sixes : sixes ,
+        StrikeRate : strikeRate
+    }
+    batsmanFile.push(batsmanDetails);
+
+    fs.writeFileSync(batsmanFilePath , JSON.stringify(batsmanFile) );
+}
+
+function updateBatsmanFile(teamName , batsmanName , runs , balls , fours , sixes , strikeRate){
+    let batsmanFilePath = `./IPL/${teamName}/${batsmanName}.json`;
+    let batsmanFile = fs.readFileSync(batsmanFilePath);
+    batsmanFile = JSON.parse(batsmanFile);
+    
+    let batsmanDetails = {
+        Runs : runs ,
+        Balls : balls , 
+        Fours :fours ,
+        Sixes : sixes ,
+        StrikeRate : strikeRate
+    }
+    batsmanFile.push(batsmanDetails);
+    fs.writeFileSync(batsmanFilePath , JSON.stringify(batsmanFile));
+}
+
+
+
+function  processDetails(teamName , batsmanName , runs , balls , fours , sixes , strikeRate){
+    let isTeamFolderExist = checkTeamFolder(teamName);
+    // Falsy value => false , "" , 0 , null , undefined , NAN 
+    if(isTeamFolderExist){
+        // team folder exists
+        let isBatsmanFileExist = checkBatsmanFile(teamName , batsmanName);
+        if(isBatsmanFileExist){
+            updateBatsmanFile(teamName , batsmanName , runs , balls , fours , sixes , strikeRate);
+        }
+        else{
+            createBatsmanFile(teamName , batsmanName , runs , balls , fours , sixes , strikeRate);
+        }
+    }
+    else{
+        // team folder does not exist
+        createTeamFolder(teamName);
+        createBatsmanFile(teamName , batsmanName , runs , balls , fours , sixes , strikeRate);
+    }
+}
 
 
 module.exports = getMatchDetails;

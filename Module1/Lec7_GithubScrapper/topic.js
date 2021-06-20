@@ -1,6 +1,7 @@
 const request = require("request");
 const cheerio = require("cheerio");
 const fs = require("fs");
+const getIssues = require("./getIssues");
 
 function proccessOneTopic(topicInfoObject){
     // TopicInfoObject :-> TopicName , TopicLink

@@ -19,6 +19,7 @@
   "homepage": "https://github.com/devesh-pande/NIET_DEV#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.10",
+    "puppeteer": "^10.0.0",
     "request": "^2.88.2"
   }
 }

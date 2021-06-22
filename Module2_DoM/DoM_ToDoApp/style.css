@@ -1,0 +1,26 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #7f8fa6;
+}
+
+input{
+    font-size: 24px;
+    width: 400px;
+    height: 40px;
+}
+
+button{
+    height: 29px;
+    width: 100px;
+    font-size: 17px;
+}
+
+li{
+    font-family: 'Oxygen', sans-serif;
+    color: ghostwhite;
+    font-size: 24px;
+    list-style: none;
+}

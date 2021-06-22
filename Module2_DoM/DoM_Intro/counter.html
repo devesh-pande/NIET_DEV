@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Document
+        </title>
+    </head>
+    <body>
+        <button class = "plus">+</button>
+        <p>0</p>
+        <button class = "minus">-</button>
+        <script>
+            let plusButton = document.querySelector(".plus");
+            let minusButton = document.querySelector(".minus");
+            let p = document.querySelector("p");
+
+            plusButton.addEventListener("click", function(){
+                let oldValue = Number(p.innerText);
+                let newValue = oldValue + 1 ;
+                p.innerText = newValue ;
+            });
+            minusButton.addEventListener("click", function(){
+                let oldValue = Number(p.innerText);
+                let newValue = oldValue - 1;
+                p.innerText = newValue ;
+            });
+            
+        </script>
+        
+    </body>
+</html>

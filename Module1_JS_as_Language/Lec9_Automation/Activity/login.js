@@ -1,7 +1,9 @@
 const puppeteer = require("puppeteer");
 const id = "nimey14680@0ranges.com" ;
 const pw = "m5r6VjMjWJiywSj" ;
-let tab ; 
+let tab ;
+let browser ;
+let solutions = require("./solutions") ;
 
 // puppeteer functions --> promisified functions
 
@@ -14,6 +16,7 @@ let browserOpenPromise = puppeteer.launch({
 });
 
 browserOpenPromise.then(function(browserInstance){
+    browser = browserInstance;
     let pagesPromise = browserInstance.pages();
     return pagesPromise;
   })
@@ -32,24 +35,16 @@ browserOpenPromise.then(function(browserInstance){
     return pwTypePromise;
   })
   .then(function(){
-    let loginPromise = tab.click(".ui-btn.ui-btn-large", pw);
+    let loginPromise = tab.click(".ui-btn.ui-btn-large");
     return loginPromise;
   })
   .then(function(){
-    let ipkWaitPromise = tab.waitForSelector("#base-card-1-link" , {visible : true});
-    return ipkWaitPromise;
+    let ipkWaitAndClickPromise = waitAndClick("#base-card-1-link", tab);
+    return ipkWaitAndClickPromise;
   })
   .then(function(){
-    let ipkClickPromise = tab.click("#base-card-1-link");
-    return ipkClickPromise;
-  })
-  .then(function(){
-    let iconsWaitPromise = tab.waitForSelector("a[data-attr1 = 'warmup']" , {visible : true});
-    return iconsWaitPromise;
-  })
-  .then(function(){
-    let iconClickPromise = tab.click("a[data-attr1 = 'warmup']");
-    return iconClickPromise;
+    let iconsWaitAndClickPromise = waitAndClick("a[data-attr1 = 'warmup']", tab);
+    return iconsWaitAndClickPromise;
   })
   .then(function(){
     let WaitPromise = tab.waitForSelector(".js-track-click.challenge-list-item" , {visible : true});
@@ -63,9 +58,7 @@ browserOpenPromise.then(function(browserInstance){
   .then(function(allATagsPromise){
     let allQuesLinksPromise = [];
     for (let i=0 ; i<allATagsPromise.length ; i++){
-      let quesLinkPromise = tab.evaluate(function(elem){
-                                          return elem.getAttribute("href");
-                                        } , allATagsPromise[i]);
+      let quesLinkPromise = tab.evaluate(function(elem){ return elem.getAttribute("href");} , allATagsPromise[i]);
       allQuesLinksPromise.push(quesLinkPromise);
     }
 
@@ -74,12 +67,144 @@ browserOpenPromise.then(function(browserInstance){
     return combinedPromise ;    // Promise<Pending>
   })
   .then(function(allQuesLinks){
-    console.log(allQuesLinks);
+    // Parallel
+    let oneQuesSolvePromise = solveQuestion(allQuesLinks[0]);
+
+    for (let i=1 ; i<allQuesLinks.length ; i++){
+      oneQuesSolvePromise = oneQuesSolvePromise.then(function(){
+        let nextQuesSolvePromise = solveQuestion(allQuesLinks[i]);
+        return nextQuesSolvePromise;
+      });
+    }
+
+    return oneQuesSolvePromise;
+  })
+  .then(function(){
+    console.log("All questions Solved");
   })
   .catch(function(err){
       console.log("Inside catch");
       console.log(err);
   })
+
+
+
+
+// Creating a new Promisified function for wait and click operation
+
+function waitAndClick(selector, tab){
+  return new Promise(function(scb, fcb){
+    let waitPromise = tab.waitForSelector(selector , {visible : true});
+    waitPromise.then(function(){
+        let clickKaPromise = tab.click(selector);
+        return clickKaPromise ;
+    })
+    .then(function(){
+      scb();
+    })
+    .catch(function(error){
+      fxb();
+    })
+  })
+}
+
+
+
+
+// Creating new Promisified function for question link and its solution
+
+function solveQuestion(quesLink){
+  return new Promise(function(scb, fcb){
+    let completeLink = "https://www.hackerrank.com"+quesLink ;
+    let code ;
+    let tab ;
+    let newTabPromise = browser.newPage();
+    newTabPromise.then(function(newTab){
+      tab = newTab ;
+      let gotoQuesPromise = tab.goto(completeLink);
+      return gotoQuesPromise;
+    })
+    .then(function(){
+      let quesNamePromise = tab.$('.ui-icon-label.page-label');
+      return quesNamePromise;
+    })
+    .then(function(quesNameH1Tag){
+      let quesPromise = tab.evaluate(function(elem){ 
+        return elem.textContent; 
+      } , quesNameH1Tag);
+      return quesPromise;
+    })
+    .then(function(quesName){
+      console.log(quesName);
+      for (let i=0 ; i<solutions.length ; i++){
+        if (solutions[i].name == quesName){
+          code = solutions[i].sol ;
+          break;
+        }
+      }
+
+      let waitAndClickPromise = waitAndClick('.checkbox-input', tab);
+      return waitAndClickPromise;
+    })
+    .then(function(){
+      let waitPromise = tab.waitForTimeout("1000");
+      return waitPromise;
+    })
+    .then(function(){
+      let codeTypePromise = tab.type('#input-1' , code);
+      return codeTypePromise;
+    })
+    .then(function(){
+      let ctrlKeyDown = tab.keyboard.down("Control");
+      return ctrlKeyDown;
+    })
+    .then(function(){
+      let akeyPress = tab.keyboard.press("a");
+      return akeyPress;
+    })
+    .then(function(){
+      let xkeyPress = tab.keyboard.press("x");
+      return xkeyPress;
+    })
+    .then(function(){
+      let codeBoxClickedPromise = tab.click(
+        ".monaco-scrollable-element.editor-scrollable.vs"
+      );
+      return codeBoxClickedPromise;
+    })
+    .then(function(){
+      let akeyPress = tab.keyboard.press("a");
+      return akeyPress;
+    })
+    .then(function(){
+      let vkeyPress = tab.keyboard.press("v");
+      return vkeyPress;
+    })
+    .then(function(){
+      let ctrlKeyUp = tab.keyboard.up("Control");
+      return ctrlKeyUp;
+    })
+    .then(function(){
+      let submitBtnClickedPromise = tab.click(
+        ".ui-btn.ui-btn-normal.hr-monaco-submit"
+      );
+      return submitBtnClickedPromise;
+    })
+    .then(function(){
+      return tab.waitForTimeout("5000");
+    })
+    .then(function(){
+      return tab.close();
+    })
+    .then(function(){
+      scb();
+    })
+    .catch(function(err){
+      fcb(err);
+    });
+
+  });
+}
 
 
 

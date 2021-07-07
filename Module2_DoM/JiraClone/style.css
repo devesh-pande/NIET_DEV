@@ -67,7 +67,8 @@ body{
 }
 
 .add:hover,
-.delete:hover{
+.delete:hover,
+.delete-selected{
     background-color: #747d8c;
 }
 
@@ -185,5 +186,7 @@ body{
       width: 100%;
       height: 76%;
       padding: 10px;
-      background-color: #f7f1e3;;
+      background-color: #f7f1e3;
+      text-align: center;
+      outline: none;
   }

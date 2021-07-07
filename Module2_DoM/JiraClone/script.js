@@ -1,10 +1,36 @@
+
 let addBtn = document.querySelector(".add");
 let body = document.querySelector("body");
 
 let grid = document.querySelector(".grid");
 let colors = ["pink", "blue", "green", "black"];
 
+
+let deleteBtn = document.querySelector(".delete");
+let deleteMode = false;
+
+if (localStorage.getItem("AllTickets") == undefined){
+    let allTickets = {};
+
+    allTickets = JSON.stringify(allTickets);
+
+    localStorage.setItem("AllTickets", allTickets);
+}
+
+deleteBtn.addEventListener("click", function(e){
+    if (e.currentTarget.classList.contains("delete-selected")){
+        e.currentTarget.classList.remove("delete-selected");
+        deleteMode = false;
+    } else {
+        e.currentTarget.classList.add("delete-selected");
+        deleteMode = true;
+    }
+})
+
 addBtn.addEventListener("click", function(){
+
+    deleteBtn.classList.remove("delete-selected");
+    deleteMode = false ;
 
     let preModal = document.querySelector(".modal");
     if (preModal != null) return;
@@ -46,19 +72,67 @@ addBtn.addEventListener("click", function(){
 
     taskInnerContainer.addEventListener("keydown", function(e){
         if (e.key == "Enter"){
+
+            let id = uid();
+            let task =  e.currentTarget.innerText ;
+
+            // Steps to save data in local storage
+            // Step 1 => jobhi data hai localStorage m use lekr aao
+            
+            let allTickets = JSON.parse(localStorage.getItem("AllTickets"));
+
+            // Step 2 => jo data aya hai use update kro
+
+            let ticketObj = {
+                color : ticketColor,
+                taskValue : task,
+            };
+
+            allTickets[id] = ticketObj;
+
+            // Step 3 => wapis updated object ko localStorage m save kr do
+
+            localStorage.setItem("AllTickets", JSON.stringify (allTickets))
+
+
+
             let ticketDiv = document.createElement("div");
             ticketDiv.classList.add("ticket");
 
-            ticketDiv.innerHTML = `<div class="ticket-color ${ticketColor}"></div>
-            <div class="ticket-id">#jdh837</div>
-            <div class="actual-task">
-                ${e.currentTarget.innerText}
+            
+
+            ticketDiv.innerHTML = `<div data-id="${id}" class="ticket-color ${ticketColor}"></div>
+            <div class="ticket-id">
+                #${id}
+            </div>
+            <div class="actual-task" contenteditable="true"> 
+                ${task}
             </div>` ;
 
             let ticketColorDiv = ticketDiv.querySelector(".ticket-color");
 
+            let actualTaskDIv = ticketDiv.querySelector(".actual-task");
+
+            actualTaskDIv.addEventListener("input", function(e){
+                let updatedTask = e.currentTarget.innerText;
+
+                let currTicketId = e.currentTarget.getAttribute("data-id");
+                
+                // 1.fetch
+                let allTickets = JSON.parse(localStorage.getItem("Alltickets"));
+
+                // 2. update
+                allTickets[currTicketId].taskValue = updatedTask ;
+
+                // 3.save
+                localStorage.setItem("AllTickets", JSON.stringify(allTickets));
+
+            })
+
             ticketColorDiv.addEventListener("click", function(e){
               // let colors = ["pink", "blue", "green", "black"];
+
+              let currTicketId = e.currentTarget.getAttribute("data-id")
 
               let currColor = e.currentTarget.classList[1];
               let index = -1 ;
@@ -71,9 +145,40 @@ addBtn.addEventListener("click", function(){
 
               let newColor = colors[index];
 
+              
+              // 1- Alln tickets lana ; 2- update karna ; 3- Wapis save karna
+
+              let allTickets = JSON.parse(localStorage.getItem("AllTIckets"));
+
+              allTickets[currTicketId].color = newColor;
+
+              localStorage.setItem("AllTickets", JSON.stringify(allTickets));
+              
+
               ticketColorDiv.classList.remove(currColor);
               ticketColorDiv.classList.add(newColor);
             });
+
+            ticketDiv.addEventListener("click", function(e){
+                if (deleteMode){
+
+                    // TO delete ticket from localStorage after deleting from ui
+                    // 1. Fetch id
+                    let currTicketId = e.currentTarget.getAttribute("data-id");
+
+                    // Deleting from UI
+                    e.currentTarget.remove();
+
+                    // 2. Fetch saved data from localStorage
+                    let allTickets = JSON.parse(localStorage.getItem("AllTickets"));
+
+                    // 3. Updata - Simply deleting data of ticket from storage
+                    delete allTickets[currTicketId];
+
+                    // 4. Save - Saving updated data item
+                    localStorage.setItem("ALlTickets", JSON.stringify(allTickets));
+                }
+            })
 
             grid.append(ticketDiv);
             div.remove();

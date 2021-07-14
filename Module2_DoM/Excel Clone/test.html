@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .card {
+        height: 15rem;
+        width: 10rem;
+        background-color: yellow;
+        position: relative;
+        box-shadow: -2px 2px 5px 0px #aaa;
+      }
+
+      h2,
+      p {
+        padding: 10px;
+        text-align: center;
+        font-family: "Raleway", sans-serif;
+      }
+
+      h2 {
+        font-weight: 700;
+      }
+
+      p {
+        font-weight: 300;
+      }
+
+      .price {
+        font-family: "Raleway", sans-serif;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 1.8rem;
+        width: 4rem;
+        background-color: red;
+        position: absolute;
+        top: -0.9rem;
+        right: -2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="price">Rs 100</div>
+      <h2>Product Title</h2>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat,
+        ipsam?
+      </p>
+    </div>
+  </body>
+</html>

@@ -2,6 +2,8 @@ let rowNumberSection = document.querySelector(".row-number-section");
 
 let formulaBarSelectedCellArea = document.querySelector(".selected-cell");
 
+let formulaInput = document.querySelector(".formula-input-section");
+
 let cellSection = document.querySelector(".cell-section")
 
 let columnTagsSection = document.querySelector(".column-tag-section");
@@ -9,6 +11,32 @@ let columnTagsSection = document.querySelector(".column-tag-section");
 let lastCell;
 
 let dataObj = {};
+
+formulaInput.addEventListener("keydown", function(e){
+  if (e.key == "Enter"){
+    console.log("now evaluating formula");
+
+    let typedFormula = e.currentTarget.value;
+    console.log(typedFormula);
+
+    if (!lastCell) return ;
+
+    console.log("not returned");
+
+    let selectedCellAdd = lastCell.getAttribute("data-address");
+    let cellObj = dataObj[selectedCellAdd];
+
+    cellObj.formula = typedFormula ;
+
+    let upstream = cellObj.upstream ;
+
+    for (let k = 0 ; k < upstream.length ; k++){
+      removeFromDownstream(upstream[k], selectedCellAdd);
+    }
+
+    cellObj.upstream = [] ;
+  }
+});
 
 cellSection.addEventListener("scroll", function (e) {
   rowNumberSection.style.transform = `translateY(-${e.currentTarget.scrollTop}px)`;
@@ -35,7 +63,7 @@ for (let i = 0; i < 26; i++) {
   columnTagsSection.append(div);
 }
 
-
+//inside this nested for loop we are creating individual cells UI + cell obj
 for (let i = 1; i <= 100; i++) {
   let rowDiv = document.createElement("div");
   rowDiv.classList.add("row");
@@ -92,11 +120,14 @@ for (let i = 1; i <= 100; i++) {
 
       let currDownstream = currCellObj.downstream ;
 
-      for (let i = 0 ; i < currCellDownstream.length ; i++){
+      for (let i = 0 ; i < currDownstream.length ; i++){
         updateCell(currDownstream[i]);
       }
 
-      console.log(currCellObj);
+      
+      dataObj[currCellAddress] = currCellObj ;
+
+      console.log(dataObj);
     });
 
     cellDiv.setAttribute("contentEditable", true);
@@ -129,6 +160,20 @@ for (let i = 1; i <= 100; i++) {
   cellSection.append(rowDiv)
 
 }
+
+
+
+dataObj["A1"].value = 20;
+dataObj["A1"].downstream = ["B1"];
+dataObj["B1"].formula = "2 * A1";
+dataObj["B1"].upstream = ["A1"];
+dataObj["B1"].value = 40;
+
+let a1cell = document.querySelector("[data-address='A1']")
+let b1cell = document.querySelector("[data-address='B1']")
+
+a1cell.innerText = 20
+b1cell.innerText = 40
 
 
 // C1 = Formula(2*A1)
@@ -199,6 +244,10 @@ function updateCell(cell){
 
   dataObj[cell].value = newValue ;
 
+  // updating new value on UI
+  let cellOnUI = document.querySelector(`[data-address = '${cell}']`);
+  cellOnUI.innerText = newValue;
+  
   let downstream = cellObj.downstream;
 
   for (let i = 0 ; i < downstream.length ; i++){

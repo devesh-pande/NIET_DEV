@@ -73,6 +73,29 @@ for (let i = 1; i <= 100; i++) {
       let currCellObj = dataObj[currCellAddress];
 
       currCellObj.value = e.currentTarget.innerText;
+
+
+      // 1 -> Loop on Upstream
+      // 2 -> for each cell go to its downstream and remove ourself
+      // 3 -> apni upstream array ko empty kar le
+      
+      let currUpstream = currCellObj.upstream ;
+
+      for (let k = 0 ; k < currUpstream.length ; k++){
+
+        // removeFromDownstream(parent, child)
+
+        removeFromDownstream(currUpstream[k], currCellAddress);
+      }
+
+      currCellObj.upstream = [] ;
+
+      let currDownstream = currCellObj.downstream ;
+
+      for (let i = 0 ; i < currCellDownstream.length ; i++){
+        updateCell(currDownstream[i]);
+      }
+
       console.log(currCellObj);
     });
 
@@ -104,5 +127,82 @@ for (let i = 1; i <= 100; i++) {
   }
 
   cellSection.append(rowDiv)
+
+}
+
+
+// C1 = Formula(2*A1)
+// A1 = parent
+// C1 = child
+
+//is function kisi ki upstream se mtlb nhi hai
+//iska bs itna kaam h ki parent do and child do , aur mai parent ki downstream se child ko hta dunga
+//taki unke bichka connection khtm hojai
+//taki agr parent update ho to connection khtm hone ke baad child update na ho
+
+function removeFromDownstream(parentCell, childCell){
+
+  // 1- Fetch parentCell's downstream
+
+  let parentDownstream = dataObj[parentCell].downstream ;
+
+  // 2- Filter kro childCell ko parent ki upstream se
+
+  let filteredDownstream = [] ;
+
+  for (let i = 0 ; i < parentDownstream.length ; i++){
+    if (parentDownstream[i] != childCell){
+      filteredDownstream.push(parentDownstream[i]);
+    }
+  }
+
+  // 3- Filered upstream ko wapis save karwado dataObj mreq cell m
+
+  dataObj[parentCell].downstream = filteredDownstream ;
+
+}
+
+
+
+function updateCell(cell){
+  let cellObj = dataObj[cell];
+  let upstream = cellObj.upstream ;
+  let formula = cellObj.formula ;
+
+  // upstream me jobhi cell hai unke objects me jaunga whase unki value lekr aunga
+  // wo sari values mai ek object me key value pair form me store krunga where key being the cell address
+
+  // {
+  //   A1:20,
+  //   B1:10
+  // }
+
+  let valObj = {};
+
+  for (let i = 0 ; i < upstream.length ; i++){
+    let cellValue = dataObj[upstream[i]].value ;
+
+    valObj[upstream[i]] = cellValue ;
+  }
+
+  // hmare pas replace aur evaluate function hai 
+  // nice, right??yay
+  // a1 + b1
+
+  for (let key in valObj){
+    formula = formula.replace(key, valObj[key]);
+  }
+
+  // 20 + 10
+
+  let newValue = eval(formula);
+
+  dataObj[cell].value = newValue ;
+
+  let downstream = cellObj.downstream;
+
+  for (let i = 0 ; i < downstream.length ; i++){
+    updateCell(downstream[i]);
+  }
 
 }

@@ -75,6 +75,10 @@ formulaInput.addEventListener("keydown", function(e){
     for (let i = 0 ; i < downstream.length ; i++) {
       updateCell(downstream[i]);
     }
+
+    dataObj[selectedCellAdd] = cellObj;
+
+    formulaInput.value = "";
   }
 });
 
@@ -126,6 +130,9 @@ for (let i = 1; i <= 100; i++) {
       formula : undefined ,
       upstream : [] ,
       downstream : [] ,
+      align: "left",
+      color: "black",
+      bgColor: "white",
     };
 
     let cellDiv = document.createElement("div");
@@ -141,7 +148,7 @@ for (let i = 1; i <= 100; i++) {
       let currCellObj = dataObj[currCellAddress];
 
       currCellObj.value = e.currentTarget.innerText;
-
+      currCellObj.formula = undefined;
 
       // 1 -> Loop on Upstream
       // 2 -> for each cell go to its downstream and remove ourself
@@ -209,6 +216,17 @@ for (let i = 1; i <= 100; i++) {
 //iska bs itna kaam h ki parent do and child do , aur mai parent ki downstream se child ko hta dunga
 //taki unke bichka connection khtm hojai
 //taki agr parent update ho to connection khtm hone ke baad child update na ho
+
+if (localStorage.getItem("sheet")) {
+  console.log(1);
+  dataObj = JSON.parse(localStorage.getItem("sheet"));
+
+  for (let x in dataObj) {
+    let cell = document.querySelector(`[data-address='${x}']`);
+    if (dataObj[x].value) cell.innerText = dataObj[x].value;
+    // dataObj[x]
+  }
+}
 
 function removeFromDownstream(parentCell, childCell){
 
@@ -282,5 +300,6 @@ function updateCell(cell){
 
 
 function addToDownstream(parentCell, childCell){
-
+ // child ko parent ki downstream me add krna hai
+  dataObj[parent].downstream.push(child);
 }

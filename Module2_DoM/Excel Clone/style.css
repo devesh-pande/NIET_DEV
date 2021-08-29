@@ -29,11 +29,13 @@ body{
 }
 
 .menu-bar-section div{
+    position: relative;
     margin-left: 20px;
     color: black;
 }
 
 .menu-options-section {
+    display: flex;
     height: 8%;
     background-color: #2ecc71;
 }
@@ -120,41 +122,67 @@ body{
 
 
 
-    .column-tag {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 80px;
-        flex-shrink: 0;
-        height: 30px;
-        background-color: #27ae60;
-        border: none;
-        border-right: 1px solid;
-        color: white;
-      }
-      
-      .cell-section {
-        height: calc(76vh - 30px);
-        width: calc(100vw - 30px);
-        position: absolute;
-        top: 30px;
-        left: 30px;
-        overflow: auto;
-      }
-      
-      
-      .cell{
-        width: 80px;
-        height: 30px;
-        border: 1px solid;
-        flex-shrink: 0;
-        outline: none;
-      }
+.column-tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    flex-shrink: 0;
+    height: 30px;
+    background-color: #27ae60;
+    border: none;
+    border-right: 1px solid;
+    color: white;
+}
 
-      .cell-selected{
-        border: 2px solid rgb(60, 60, 218);
-      }
-      
-      .row{
-        display: flex;
-      }
+.cell-section {
+    height: calc(76vh - 30px);
+    width: calc(100vw - 30px);
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    overflow: auto;
+}
+
+
+.cell{
+    width: 80px;
+    height: 30px;
+    border: 1px solid;
+    flex-shrink: 0;
+    outline: none;
+}
+
+.cell-selected{
+    border: 2px solid rgb(60, 60, 218);
+}
+
+.row{
+    display: flex;
+}
+
+.menu-options-section div {
+    border: 1px solid;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.bold-italics-underline,
+.align-cell-content,
+.cell-color-options {
+    width: 23%;
+}
+
+.font-type-size {
+    width: 31%;
+}
+
+.file-drop-down {
+    position: absolute !important;
+    background-color: white;
+    left: -20px;
+    width: 4rem;
+    text-align: center;
+}
